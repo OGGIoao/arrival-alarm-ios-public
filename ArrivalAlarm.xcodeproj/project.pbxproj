@@ -1,0 +1,374 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		12A000000000000000000018 /* ArrivalShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 12A000000000000000000012 /* ArrivalShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		12A000000000000000000027 /* ArrivalWidgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 12A000000000000000000022 /* ArrivalWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		12A00000000000000000001A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 12A000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 12A000000000000000000013;
+			remoteInfo = ArrivalShare;
+		};
+		12A000000000000000000028 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 12A000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 12A000000000000000000023;
+			remoteInfo = ArrivalWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		12A000000000000000000017 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				12A000000000000000000018 /* ArrivalShare.appex in Embed App Extensions */,
+				12A000000000000000000027 /* ArrivalWidgets.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		12A000000000000000000005 /* ArrivalAlarm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArrivalAlarm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		12A00000000000000000000A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Config/Info.plist; sourceTree = "<group>"; };
+		12A00000000000000000000F /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = App.xcconfig; path = Config/App.xcconfig; sourceTree = "<group>"; };
+		12A000000000000000000012 /* ArrivalShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ArrivalShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		12A00000000000000000001B /* Share.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Share.xcconfig; path = Config/Share.xcconfig; sourceTree = "<group>"; };
+		12A000000000000000000020 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Config/Debug.xcconfig; sourceTree = "<group>"; };
+		12A000000000000000000022 /* ArrivalWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ArrivalWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		12A00000000000000000002A /* Widgets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Widgets.xcconfig; path = Config/Widgets.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		12A000000000000000000003 /* ArrivalAlarm */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ArrivalAlarm;
+			sourceTree = "<group>";
+		};
+		12A000000000000000000014 /* ShareExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ShareExtension;
+			sourceTree = "<group>";
+		};
+		12A000000000000000000021 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		12A000000000000000000024 /* Widgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		12A000000000000000000025 /* ReminderSystem */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ReminderSystem;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		12A000000000000000000008 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		12A000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				12A000000000000000000003 /* ArrivalAlarm */,
+				12A000000000000000000014 /* ShareExtension */,
+				12A000000000000000000021 /* Shared */,
+				12A000000000000000000024 /* Widgets */,
+				12A000000000000000000025 /* ReminderSystem */,
+				12A00000000000000000000A /* Info.plist */,
+				12A00000000000000000000F /* App.xcconfig */,
+				12A000000000000000000020 /* Debug.xcconfig */,
+				12A00000000000000000001B /* Share.xcconfig */,
+				12A00000000000000000002A /* Widgets.xcconfig */,
+				12A000000000000000000004 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		12A000000000000000000004 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				12A000000000000000000005 /* ArrivalAlarm.app */,
+				12A000000000000000000012 /* ArrivalShare.appex */,
+				12A000000000000000000022 /* ArrivalWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		12A000000000000000000006 /* ArrivalAlarm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12A000000000000000000011 /* Build configuration list for PBXNativeTarget "ArrivalAlarm" */;
+			buildPhases = (
+				12A000000000000000000007 /* Sources */,
+				12A000000000000000000008 /* Frameworks */,
+				12A000000000000000000009 /* Resources */,
+				12A000000000000000000017 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				12A000000000000000000019 /* PBXTargetDependency */,
+				12A000000000000000000029 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				12A000000000000000000003 /* ArrivalAlarm */,
+				12A000000000000000000021 /* Shared */,
+				12A000000000000000000025 /* ReminderSystem */,
+			);
+			name = ArrivalAlarm;
+			productName = ArrivalAlarm;
+			productReference = 12A000000000000000000005 /* ArrivalAlarm.app */;
+			productType = "com.apple.product-type.application";
+		};
+		12A000000000000000000013 /* ArrivalShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12A000000000000000000016 /* Build configuration list for PBXNativeTarget "ArrivalShare" */;
+			buildPhases = (
+				12A000000000000000000015 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				12A000000000000000000014 /* ShareExtension */,
+				12A000000000000000000021 /* Shared */,
+			);
+			name = ArrivalShare;
+			productName = ArrivalShare;
+			productReference = 12A000000000000000000012 /* ArrivalShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		12A000000000000000000023 /* ArrivalWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 12A00000000000000000002D /* Build configuration list for PBXNativeTarget "ArrivalWidgets" */;
+			buildPhases = (
+				12A000000000000000000026 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				12A000000000000000000024 /* Widgets */,
+				12A000000000000000000025 /* ReminderSystem */,
+			);
+			name = ArrivalWidgets;
+			productName = ArrivalWidgets;
+			productReference = 12A000000000000000000022 /* ArrivalWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		12A000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 2660;
+			};
+			buildConfigurationList = 12A000000000000000000010 /* Build configuration list for PBXProject "ArrivalAlarm" */;
+			developmentRegion = "zh-Hans";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				"zh-Hans",
+				Base,
+			);
+			mainGroup = 12A000000000000000000002;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 12A000000000000000000004 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				12A000000000000000000006 /* ArrivalAlarm */,
+				12A000000000000000000013 /* ArrivalShare */,
+				12A000000000000000000023 /* ArrivalWidgets */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		12A000000000000000000009 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		12A000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12A000000000000000000015 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		12A000000000000000000026 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		12A000000000000000000019 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 12A000000000000000000013 /* ArrivalShare */;
+			targetProxy = 12A00000000000000000001A /* PBXContainerItemProxy */;
+		};
+		12A000000000000000000029 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 12A000000000000000000023 /* ArrivalWidgets */;
+			targetProxy = 12A000000000000000000028 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		12A00000000000000000000B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		12A00000000000000000000C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		12A00000000000000000000D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 12A000000000000000000020 /* Debug.xcconfig */;
+			buildSettings = {
+				DEVELOPMENT_TEAM = "";
+			};
+			name = Debug;
+		};
+		12A00000000000000000000E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 12A00000000000000000000F /* App.xcconfig */;
+			buildSettings = {
+				DEVELOPMENT_TEAM = "";
+			};
+			name = Release;
+		};
+		12A00000000000000000001E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 12A00000000000000000001B /* Share.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		12A00000000000000000001F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 12A00000000000000000001B /* Share.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		12A00000000000000000002B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 12A00000000000000000002A /* Widgets.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		12A00000000000000000002C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 12A00000000000000000002A /* Widgets.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		12A000000000000000000010 /* Build configuration list for PBXProject "ArrivalAlarm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12A00000000000000000000B /* Debug */,
+				12A00000000000000000000C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12A000000000000000000011 /* Build configuration list for PBXNativeTarget "ArrivalAlarm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12A00000000000000000000D /* Debug */,
+				12A00000000000000000000E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12A000000000000000000016 /* Build configuration list for PBXNativeTarget "ArrivalShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12A00000000000000000001E /* Debug */,
+				12A00000000000000000001F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		12A00000000000000000002D /* Build configuration list for PBXNativeTarget "ArrivalWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				12A00000000000000000002B /* Debug */,
+				12A00000000000000000002C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 12A000000000000000000001 /* Project object */;
+}
