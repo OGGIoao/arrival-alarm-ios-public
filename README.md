@@ -6,9 +6,13 @@
 
 > iOS 26 及以上 · 原型可从源码试用 · [查看验证进度](#当前进度)
 
+**哈尔滨工程大学演示**（iPhone 模拟器）。选站和范围 → 守候中 → 锁屏到站提醒 → 步行到学校。
+
 <p>
-  <img src="docs/screenshots/home.png" width="220" alt="首页显示下车站和提醒状态">
-  <img src="docs/screenshots/choose-station.png" width="220" alt="地图上的候选地铁站、目的地和蓝色提醒范围">
+  <a href="docs/screenshots/choose-station.png"><img src="docs/screenshots/choose-station.png" width="168" alt="目的地为哈尔滨工程大学，地图推荐大有坊街站并显示 500 米提醒范围"></a>
+  <a href="docs/screenshots/home.png"><img src="docs/screenshots/home.png" width="168" alt="大有坊街站守候中，首页显示距离并提示可以锁屏"></a>
+  <a href="docs/screenshots/lockscreen-arrival.png"><img src="docs/screenshots/lockscreen-arrival.png" width="168" alt="进入提醒范围后，锁屏出现快到站了通知"></a>
+  <a href="docs/screenshots/walking-route.png"><img src="docs/screenshots/walking-route.png" width="168" alt="下车后打开 Apple 地图，步行终点为哈尔滨工程大学"></a>
 </p>
 
 ## 怎么用
@@ -22,8 +26,10 @@
 
 - **常去的地点可以复用。** 保存上次选的地点和范围。首页显示「下次还会提醒」时，离开后再次进入同一范围可收到提醒，随时可以关闭。
 - **可以先试一下提醒。** 首页右上角打开「检查提醒」，可检查精确位置、锁屏通知，并发送一条 10 秒后的测试提醒。
-- **锁屏也能看守候状态。** 接入了 iPhone 锁屏实时活动、灵动岛和配对 Apple Watch 的智能叠放。控制中心和快捷指令可打开「开始上次守候」。
+- **锁屏也能看守候状态。** 接入了 iPhone 锁屏实时活动、灵动岛和配对 Apple Watch 的智能叠放。
 - **支持从地图带入地点。** 可从地图 App 的分享菜单发送地点，也可粘贴地点名、带坐标的地图链接或经纬度。
+
+常用同一站时，可打开控制中心，点「＋」→「添加控制」，搜索「别坐过站」并添加「开始上次守候」。以后点这个控件即可打开 App，用上次的地点和范围开始守候。也可在「快捷指令」App 里直接运行同名动作。
 
 ## 当前进度
 
