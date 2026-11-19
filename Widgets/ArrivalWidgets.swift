@@ -58,14 +58,24 @@ private struct ReminderActivityCard: View {
     }
 
     var body: some View {
-        HStack(spacing: family == .small ? 8 : 12) {
+        HStack(alignment: .top, spacing: family == .small ? 8 : 12) {
             Image(systemName: phase.icon)
                 .font(family == .small ? .subheadline.weight(.semibold) : .title3.weight(.semibold))
                 .foregroundStyle(.cyan)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 3) {
-                Text(phase.title)
-                    .font(family == .small ? .footnote.weight(.semibold) : .headline)
+                if family == .small {
+                    Text(context.state.placeName ?? "到站提醒")
+                        .font(.headline)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        .privacySensitive(context.state.placeName != nil)
+                    Text(phase.title)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(phase == .positionUnavailable ? .orange : .secondary)
+                } else {
+                    Text(phase.title).font(.headline)
+                }
                 if let distance = context.state.distance, phase == .monitoring {
                     Text("直线约\(distance)")
                         .font(.caption)
@@ -79,7 +89,7 @@ private struct ReminderActivityCard: View {
                         .privacySensitive()
                 }
             }
-            .lineLimit(1)
+            .lineLimit(family == .small ? 1 : 2)
             Spacer(minLength: 0)
         }
         .padding(family == .small ? 8 : 14)

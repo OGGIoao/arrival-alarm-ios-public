@@ -4,7 +4,6 @@ import UserNotifications
 enum ArrivalNotifications {
     static let testDelay = 10
     static let returnID = "last-trip-return"
-    static let returnDetailsID = UUID()
     static let arrivalCategory = "arrival"
     static let trackingCategory = "tracking"
     static let recoveryCategory = "tracking-recovery"
@@ -30,6 +29,19 @@ enum ArrivalNotifications {
     }
 
     static func trackingID(_ id: UUID) -> String { "tracking-\(id.uuidString)" }
+
+    static func tripID(in request: UNNotificationRequest) -> UUID? {
+        (request.content.userInfo["tripID"] as? String).flatMap(UUID.init(uuidString:))
+    }
+
+    static func openingRoute(for response: UNNotificationResponse) -> ArrivalNotificationRoute? {
+        guard response.actionIdentifier == UNNotificationDefaultActionIdentifier else { return nil }
+        let request = response.notification.request
+        guard request.content.categoryIdentifier == arrivalCategory else { return nil }
+        let id = tripID(in: request)
+        if request.identifier == returnID { return .returnVisit(id) }
+        return id.map { .trip($0) }
+    }
 
     static func trackingContent(id: UUID, place: String?, interrupted: Bool) -> UNNotificationContent {
         let content = UNMutableNotificationContent()
@@ -74,12 +86,12 @@ enum ArrivalNotifications {
         return UNNotificationRequest(identifier: identifier, content: updated, trigger: trigger)
     }
 
-    static func returnRequest(for target: ArrivalTarget, showsDestination: Bool) -> UNNotificationRequest {
+    static func returnRequest(for target: ArrivalTarget, id: UUID, showsDestination: Bool) -> UNNotificationRequest {
         let region = CLCircularRegion(center: target.station.coordinate, radius: Double(target.radius.rawValue), identifier: returnID)
         region.notifyOnEntry = true
         region.notifyOnExit = false
         let trigger = UNLocationNotificationTrigger(region: region, repeats: true)
-        let receipt = ArrivalReceipt(id: returnDetailsID, placeName: target.station.name)
+        let receipt = ArrivalReceipt(id: id, placeName: target.station.name)
         return UNNotificationRequest(
             identifier: returnID, content: arrivalContent(receipt: receipt, showsDestination: showsDestination), trigger: trigger
         )

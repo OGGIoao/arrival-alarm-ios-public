@@ -1,5 +1,6 @@
 import Combine
 import CoreLocation
+import OSLog
 import UIKit
 import UserNotifications
 
@@ -38,6 +39,7 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
     @Published private(set) var distanceLabel: String?
     @Published private(set) var locationAccess: Access = .notRequested
     @Published var presentedArrival: ArrivalReceipt?
+    @Published private(set) var pendingArrival: ArrivalNotificationRoute?
 
     private let locationManager = CLLocationManager()
     private let notifications = UNUserNotificationCenter.current()
@@ -68,9 +70,12 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.pausesLocationUpdatesAutomatically = false
         locationManager.showsBackgroundLocationIndicator = true
+        Task { await restore() }
+    }
+
+    func registerNotificationDelegate() {
         notifications.delegate = self
         notifications.setNotificationCategories(ArrivalNotifications.categories)
-        Task { await restore() }
     }
 
     func select(_ selected: StationSelection) {
@@ -81,7 +86,10 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
         guard save({ data in
             data.selection = selected
             data.remember(selected)
-            if !sameTarget { data.activeID = nil }
+            if !sameTarget {
+                data.activeID = nil
+                data.returnArrival = nil
+            }
         }) else { return }
         if !sameTarget {
             if let previousID { removeTrackingNotice(id: previousID) }
@@ -139,6 +147,7 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
             removeTrackingNotice(id: id)
         }
         if state == .returnScheduled {
+            guard save({ $0.returnArrival = nil }) else { return }
             cancelReturnReminder()
             if let arrival = trip.arrival { acknowledge(arrival.id) }
         } else {
@@ -189,8 +198,7 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
             let id = trip.activeID ?? UUID()
             let previousArrival = trip.arrival
             guard save({ data in
-                data.activeID = id
-                data.arrival = nil
+                data.beginTrip(id: id, for: selection, at: .now)
             }) else { return }
             if let previousArrival { cancelArrivalNotifications(previousArrival.id) }
             cancelReturnReminder()
@@ -405,8 +413,12 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
                     notifications.removePendingNotificationRequests(withIdentifiers: [identifier])
                 }
             }
+            let returnArrival = ArrivalReceipt(id: UUID(), placeName: receipt.placeName, walkingDestination: receipt.walkingDestination)
+            guard save({ $0.returnArrival = returnArrival }) else { return }
             do {
-                try await notifications.add(ArrivalNotifications.returnRequest(for: target, showsDestination: trip.showsDestination))
+                try await notifications.add(ArrivalNotifications.returnRequest(
+                    for: target, id: returnArrival.id, showsDestination: trip.showsDestination
+                ))
                 state = .returnScheduled
             } catch {
                 state = .notified
@@ -415,14 +427,15 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
     }
 
     func acknowledge(_ id: UUID) {
-        if id == ArrivalNotifications.returnDetailsID {
+        if state == .returnScheduled || state == .restoring,
+           ArrivalNotificationRoute.returnVisit(id).receipt(in: trip) != nil {
             notifications.removeDeliveredNotifications(withIdentifiers: [ArrivalNotifications.returnID])
-            presentedArrival = nil
+            if presentedArrival?.id == id { presentedArrival = nil }
             return
         }
         guard trip.arrival?.id == id else { return }
         cancelArrivalNotifications(id)
-        if save({ $0.arrival = nil }) { presentedArrival = nil }
+        if save({ $0.arrival = nil }), presentedArrival?.id == id { presentedArrival = nil }
     }
 
     func setShowsDestination(_ value: Bool) {
@@ -459,11 +472,12 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
                 if state.tracksLocation || hasInterruptedTrip { await postTrackingNotice(id: id) }
             }
             if state == .returnScheduled, let target = selection?.target,
-               requests.contains(where: { $0.identifier == ArrivalNotifications.returnID }) {
+               let request = requests.first(where: { $0.identifier == ArrivalNotifications.returnID }),
+               let id = ArrivalNotifications.tripID(in: request) {
                 // 先取消旧文案，再更新仍然开启的回访提醒。
                 cancelReturnReminder()
                 do {
-                    try await notifications.add(ArrivalNotifications.returnRequest(for: target, showsDestination: value))
+                    try await notifications.add(ArrivalNotifications.returnRequest(for: target, id: id, showsDestination: value))
                     if state != .returnScheduled { cancelReturnReminder() }
                 } catch {
                     if state == .returnScheduled { state = .notified }
@@ -483,6 +497,7 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
         cancelReturnReminder()
         endLocationUpdates()
         presentedArrival = nil
+        pendingArrival = nil
         #if DEBUG
         diagnostics.clear()
         #endif
@@ -567,7 +582,8 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
         }
         guard let target = selection?.target,
               let request = requests.first(where: { $0.identifier == ArrivalNotifications.returnID }),
-              ArrivalNotifications.matchesReturnRequest(request, target: target) else {
+              ArrivalNotifications.matchesReturnRequest(request, target: target),
+              trip.returnArrival == nil || ArrivalNotifications.tripID(in: request) == trip.returnArrival?.id else {
             cancelReturnReminder()
             state = .idle
             return
@@ -582,20 +598,34 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
         }
     }
 
-    private func handleAction(_ action: String, requestID: String, tripID: UUID?) {
+    func queueArrivalOpening(_ route: ArrivalNotificationRoute) {
+        #if DEBUG
+        Logger(subsystem: "ArrivalAlarm", category: "NotificationOpening").notice("收到到站通知打开请求")
+        #endif
+        if let id = route.receiptID, presentedArrival?.id == id { return }
+        if pendingArrival != route { pendingArrival = route }
+    }
+
+    func takeArrivalOpening() -> ArrivalNotificationRoute? {
+        #if DEBUG
+        if pendingArrival != nil {
+            Logger(subsystem: "ArrivalAlarm", category: "NotificationOpening").notice("首页已接收打开请求")
+        }
+        #endif
+        defer { pendingArrival = nil }
+        return pendingArrival
+    }
+
+    func receipt(for route: ArrivalNotificationRoute) -> ArrivalReceipt? {
+        if case .returnVisit = route, state != .returnScheduled { return nil }
+        return route.receipt(in: trip)
+    }
+
+    private func handleAction(_ action: String, requestID: String, tripID: UUID) {
         if requestID == ArrivalNotifications.returnID {
-            if action == UNNotificationDefaultActionIdentifier, let selection {
-                presentedArrival = ArrivalReceipt(
-                    id: ArrivalNotifications.returnDetailsID,
-                    placeName: selection.target.station.name,
-                    walkingDestination: selection.separateDestination
-                )
-            } else if action == ArrivalNotifications.acknowledgeAction {
-                notifications.removeDeliveredNotifications(withIdentifiers: [requestID])
-            }
+            if action == ArrivalNotifications.acknowledgeAction { acknowledge(tripID) }
             return
         }
-        guard let tripID else { return }
         switch action {
         case ArrivalNotifications.stopAction:
             if trip.activeID == tripID { stop() }
@@ -606,19 +636,33 @@ final class Reminder: NSObject, ObservableObject, @preconcurrency CLLocationMana
             }
         case ArrivalNotifications.acknowledgeAction:
             acknowledge(tripID)
-        case UNNotificationDefaultActionIdentifier:
-            if trip.arrival?.id == tripID { presentedArrival = trip.arrival }
         default:
             break
         }
     }
 
     nonisolated func userNotificationCenter(
-        _ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse
-    ) async {
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping @Sendable () -> Void
+    ) {
+        #if DEBUG
+        Logger(subsystem: "ArrivalAlarm", category: "NotificationOpening").notice("通知代理收到用户响应")
+        #endif
+        let route = ArrivalNotifications.openingRoute(for: response)
+        let action = response.actionIdentifier
         let request = response.notification.request
-        let tripID = (request.content.userInfo["tripID"] as? String).flatMap(UUID.init(uuidString:))
-        await handleAction(response.actionIdentifier, requestID: request.identifier, tripID: tripID)
+        let requestID = request.identifier
+        let tripID = ArrivalNotifications.tripID(in: request)
+        Task { @MainActor in
+            // UIKit 可能在完成回调里更新场景快照，须在主线程交还控制权。
+            defer { completionHandler() }
+            if let route {
+                queueArrivalOpening(route)
+            } else if let tripID {
+                handleAction(action, requestID: requestID, tripID: tripID)
+            }
+        }
     }
 
     nonisolated func userNotificationCenter(

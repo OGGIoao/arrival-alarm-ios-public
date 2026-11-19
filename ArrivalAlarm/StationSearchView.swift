@@ -3,6 +3,7 @@ import SwiftUI
 
 struct StationSearchView: View {
     let initialRadius: ReminderRadius
+    let frequent: [StationSelection]
     let recent: [StationSelection]
     let nearby: CLLocationCoordinate2D?
     let onConfirm: (StationSelection) -> Void
@@ -30,12 +31,14 @@ struct StationSearchView: View {
 
     init(
         initialRadius: ReminderRadius,
+        frequent: [StationSelection],
         recent: [StationSelection],
         nearby: CLLocationCoordinate2D?,
         initialInput: String,
         onConfirm: @escaping (StationSelection) -> Void
     ) {
         self.initialRadius = initialRadius
+        self.frequent = frequent
         self.recent = recent
         self.nearby = nearby
         self.onConfirm = onConfirm
@@ -61,11 +64,11 @@ struct StationSearchView: View {
 
                 switch phase {
                 case .idle:
-                    if keyword.isEmpty {
-                        Text("可以输入「哈尔滨工程大学」，也可以粘贴地图链接或经纬度。")
+                    if keyword.isEmpty, frequent.isEmpty {
+                        Text("输入目的地或地铁站，也可以粘贴地图链接。")
                             .foregroundStyle(.secondary)
                     }
-                    recentSection
+                    savedPlacesSections
                     if !amapSuggestions.isEmpty {
                         Section("地点建议") {
                             ForEach(amapSuggestions) { item in
@@ -131,7 +134,7 @@ struct StationSearchView: View {
                 case .empty:
                     Text("没有找到地点。试试加上城市名，或换个关键词。")
                         .foregroundStyle(.secondary)
-                    recentSection
+                    savedPlacesSections
                 case .failed(let message):
                     VStack(alignment: .leading, spacing: 8) {
                         Text(message)
@@ -139,7 +142,7 @@ struct StationSearchView: View {
                             .buttonStyle(.bordered)
                             .controlSize(.large)
                     }
-                    recentSection
+                    savedPlacesSections
                 }
             }
             .scrollDismissesKeyboard(.interactively)
@@ -208,28 +211,46 @@ struct StationSearchView: View {
     }
 
     @ViewBuilder
-    private var recentSection: some View {
-        let matches = recent.filter { item in
-            keyword.isEmpty || item.destination.name.localizedCaseInsensitiveContains(keyword)
-                || item.target.station.name.localizedCaseInsensitiveContains(keyword)
+    private var savedPlacesSections: some View {
+        let matchingFrequent = frequent.filter(matchesKeyword)
+        let matchingRecent = recent.filter { item in
+            matchesKeyword(item) && !matchingFrequent.contains { $0.matchesDestination(item) }
         }
-        if !matches.isEmpty {
-            Section("最近地点") {
-                ForEach(matches) { item in
-                    NavigationLink {
-                        StationRangeView(selection: item, onConfirm: confirm)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(item.destination.name).font(.headline)
-                            if let address = item.destination.address {
-                                Text(address).font(.subheadline).foregroundStyle(.secondary)
-                            }
-                        }
-                        .padding(.vertical, 4)
-                    }
-                }
+
+        if !matchingFrequent.isEmpty {
+            Section("常用地点") {
+                savedPlaceRows(matchingFrequent, showsReminderDetails: true)
             }
         }
+        if !matchingRecent.isEmpty {
+            Section("最近地点") {
+                savedPlaceRows(matchingRecent, showsReminderDetails: false)
+            }
+        }
+    }
+
+    private func savedPlaceRows(_ items: [StationSelection], showsReminderDetails: Bool) -> some View {
+        ForEach(items) { item in
+            NavigationLink {
+                StationRangeView(selection: item, onConfirm: confirm)
+            } label: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(item.destination.name).font(.headline)
+                    let detail = showsReminderDetails
+                        ? "\(item.target.station.name) · \(item.target.radius.label)"
+                        : item.destination.address
+                    if let detail {
+                        Text(detail).font(.subheadline).foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+        }
+    }
+
+    private func matchesKeyword(_ item: StationSelection) -> Bool {
+        keyword.isEmpty || item.destination.name.localizedCaseInsensitiveContains(keyword)
+            || item.target.station.name.localizedCaseInsensitiveContains(keyword)
     }
 
     private var keyword: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
