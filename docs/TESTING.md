@@ -1,6 +1,6 @@
 # 构建与实测
 
-当前阶段：模拟器流程和代码回归已通过，**下一步是真机锁屏跑地铁**。尚未完成真机安装验收，也没有发布 TestFlight 或可直接安装的安装包。模拟器通知不能证明地下线路不会漏报。
+当前进度以 [README 的阶段说明](../README.md#做到哪一步了) 为准。真机签名安装与启动验收仍未完成，安装成功后再按本页步骤锁屏跑地铁。模拟器通知不能证明地下线路不会漏报。
 
 ## 模拟器
 
@@ -34,6 +34,8 @@ xcrun simctl spawn booted "$PWD/build/arrival-notification"
 2. 在 Xcode 的 **Signing & Capabilities** 中，为 `ArrivalAlarm`、`ArrivalShare`、`ArrivalWidgets` 选择同一开发团队。主 App 和分享扩展需要使用同一个 App Group。 [Xcode 运行指南](https://developer.apple.com/documentation/xcode/running-your-app-on-simulated-or-physical-devices) · [App Groups 配置](https://developer.apple.com/documentation/xcode/configuring-app-groups)
 3. 用 **Debug** 构建运行到 iPhone。安装后可停止 Xcode 调试，再从 iPhone 主屏幕打开 App。右上角「设置」中可找到「定位诊断（调试版）」。
 
+默认工程包含“时效性通知”权限。免费个人团队可能在签名时收到 Xcode 的“不支持 Time Sensitive Notifications”提示；这不是 Swift 编译错误。完整配置需要使用支持该权限的开发团队。普通通知的本机试用构建需单独移除该权限，并单独核对通知行为；仓库目前没有提供一键降级配置，不能把待重签的 IPA 当成可安装发布包。
+
 ## 锁屏提醒和地铁测试
 
 1. 从首页右上角「设置」→「试一下提醒」，确认精确位置和锁屏通知已经打开，发送测试提醒后锁屏，等 10 秒。测试声音时请开启系统的通知声音。
@@ -55,5 +57,7 @@ xcrun simctl spawn booted "$PWD/build/arrival-notification"
 ## 首页与 Apple Watch
 
 首次进入时，首页显示地铁插画、搜索入口和一句用途说明。选过地点后，首页显示真实历史。确认地图范围后进入「本次提醒」，开启后回首页应优先看到当前任务。结束后，当前任务卡收起，历史仍可复用。
+
+布局验收时，分别查看首次进入、最近地点、待开始和守候中：标题与插画融合，搜索与卡片之间留有间距，长站名可以换行，底部主按钮不遮挡正文。地图页需同时检查“搜索后确认”和“详情内调整范围”两种入口；地图高度随可用空间调整，大字体或小屏可滚动查看全部说明。
 
 在配对 iPhone 上开启实时活动后，检查 Apple Watch 的智能叠放。打开「锁屏显示站名」时，手表应显示站名和状态，位置可用时再显示直线距离。关闭这项隐私设置后，站名隐藏。分别观察等待定位、位置过期、恢复更新和结束后的卡片呈现，记录真机同步延迟。手表通知与振动需要用配对真机单独核对。

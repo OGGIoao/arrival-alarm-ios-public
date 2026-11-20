@@ -11,6 +11,7 @@ struct StationRangeView: View {
     @State private var selectedMarker: UUID?
     @State private var showingStations = false
     @State private var scrollPosition = ScrollPosition(edge: .top)
+    @State private var viewportHeight: CGFloat = 720
 
     private let selection: StationSelection
     private let isEditing: Bool
@@ -92,6 +93,7 @@ struct StationRangeView: View {
             .background(surface)
         }
         .background(surface.ignoresSafeArea())
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewportHeight = $0 }
         .navigationTitle(isEditing ? "调整提醒" : "确认提醒地点")
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: showingStations) { _, showing in
@@ -262,7 +264,8 @@ struct StationRangeView: View {
                 camera = .rect(previewBounds)
             }
         }
-        .frame(height: 328)
+        // 为站名、范围说明和底部确认按钮留出空间，小屏仍可滚动查看。
+        .frame(height: min(328, max(220, viewportHeight * 0.34)))
         .clipShape(.rect(cornerRadius: 20))
         .accessibilityLabel("站点和提醒范围地图")
         .accessibilityValue(radius.label)
